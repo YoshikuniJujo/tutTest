@@ -13,16 +13,18 @@ main = do
   [ fn ]       <- getArgs
   tutRule      <- getDataFileName "tutcode-rule.txt" >>= readFile >>= return . read
   keyPos       <- getDataFileName "keyboard-pos.txt" >>= readFile >>= return . read
-  ( pos, dic ) <- readTutFileLineWithDic keyPos tutRule fn
+  cnt          <- readFile fn
   vty <- mkVty
   DisplayRegion width height <- display_bounds $ terminal vty
-  ( g, w, t ) <- 5 `timesDo` ( 0, 1, 1 ) $ \n ( g0, w0, t0 ) -> do
-    ( g, w, t ) <- doWhile ( g0, w0, t0 ) $ \( good, whole, time ) -> do
-      ( g, w, t, fin ) <- runTutTyping keyPos tutRule vty pos dic n ( good, whole, time )
-      return $ ( if fin then ( g, w, t ) else ( good, whole, time ),
-                 fromIntegral g / ( fromIntegral w :: Double ) < 0.95 ||
-                 fromIntegral w / t < 3 )
-    return ( g, w, t )
+  (g, w, t) <-  foreach (lines cnt) $ \ln -> do
+    let ( pos, dic ) = readTutLineWithDic keyPos tutRule ln
+    5 `timesDo` ( 0, 1, 1 ) $ \n ( g0, w0, t0 ) -> do
+      ( g, w, t ) <- doWhile ( g0, w0, t0 ) $ \( good, whole, time ) -> do
+        ( g, w, t, fin ) <- runTutTyping keyPos tutRule vty pos dic n ( good, whole, time )
+        return $ ( if fin then ( g, w, t ) else ( good, whole, time ),
+                   fromIntegral g / ( fromIntegral w :: Double ) < 0.95 ||
+                   fromIntegral w / t < 3 )
+      return ( g, w, t )
   shutdown vty
   putStrLn $ showFFloat ( Just 0 )
                         ( fromIntegral g / fromIntegral w * 100 :: Double ) "" ++
@@ -88,3 +90,7 @@ splitString _ r  [ ]        = [ r ]
 splitString n r  sa@( s : ss )
   | length ( r ++ s ) > n    = r : splitString n "" sa
   | otherwise                = splitString n ( r ++ s ) ss
+
+foreach :: [a] -> (a -> IO b) -> IO b
+foreach [x] f		= f x
+foreach (x : xs) f	= f x >> foreach xs f

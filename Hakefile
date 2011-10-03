@@ -8,10 +8,10 @@ main = do
   hake $ [
     task "manifest" [
       "rm -f ~/local/portage/app-misc/tutTest/Manifest" ,
-      "rm -f /usr/portage/distfiles/tutTest-0.0.3.tar.gz" ,
+      "rm -f /usr/portage/distfiles/tutTest-0.0.4.tar.gz" ,
       "cabal sdist" ,
-      "yjftp put dist/tutTest-0.0.3.tar.gz " ++ address ++
+      "yjftp put dist/tutTest-0.0.4.tar.gz " ++ address ++
         "/homepage/second/portage/distfiles/ " ++ user ,
-      "ebuild ~/local/portage/app-misc/tutTest/tutTest-0.0.3.ebuild manifest"
+      "ebuild ~/local/portage/app-misc/tutTest/tutTest-0.0.4.ebuild manifest"
      ]
    ]

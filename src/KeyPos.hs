@@ -8,6 +8,7 @@ module KeyPos (
 , readTutFileLineSep
 
 , readTutFileLineWithDic
+, readTutLineWithDic
 
 , strToTutPos
 , strToTutDic
@@ -119,7 +120,7 @@ readTutFileLineSep kbTbl posTbl fn
 readTutLineWithDic :: [( Char, KeyPos)] -> [(String, [Char])] -> String ->
 	([KeyPos], [(Char, [KeyPos])])
 readTutLineWithDic kbTbl posTbl str =
-	(strToTutPos kbTbl posTbl str, strToTutDic kbToTutDic kbTbl posTbl str)
+	(strToTutPos kbTbl posTbl str, strToTutDic kbTbl posTbl str)
 
 readTutFileLineWithDic ::
   [ ( Char, KeyPos ) ] -> [ ( String, [ Char ] ) ] -> String
