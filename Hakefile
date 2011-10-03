@@ -1,0 +1,17 @@
+import Development.Hake
+import Development.Hake.FunSet
+
+main :: IO ()
+main = do
+  address <- fmap ( filter (/='\n') ) $ readFile "address"
+  user    <- fmap ( filter (/='\n') ) $ readFile "user"
+  hake $ [
+    task "manifest" [
+      "rm -f ~/local/portage/app-misc/tutTest/Manifest" ,
+      "rm -f /usr/portage/distfiles/tutTest-0.0.3.tar.gz" ,
+      "cabal sdist" ,
+      "yjftp put dist/tutTest-0.0.3.tar.gz " ++ address ++
+        "/homepage/second/portage/distfiles/ " ++ user ,
+      "ebuild ~/local/portage/app-misc/tutTest/tutTest-0.0.3.ebuild manifest"
+     ]
+   ]

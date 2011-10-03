@@ -1,0 +1,30 @@
+name:          tutTest
+version:       0.0.3
+license:       BSD3
+license-file:  LICENSE
+author:        Yoshikuni Jujo
+maintainer:    PAF01143@nifty.ne.jp
+
+category:      Game
+synopsis:      Practice for tut-code which is Japanese input tool.
+description:   Practice for tut-code which is Japanese input tool.
+
+build-type:    Simple
+cabal-version: >= 1.2
+
+data-dir:      src
+data-files:    tutcode-rule.txt, keyboard-pos.txt
+
+executable tutTest
+  hs-source-dirs: src
+  main-is:        tutTest.hs
+  other-modules:  KeyPos
+  build-depends:  base >= 3 && < 5, vty, yjtools
+  ghc-options:    -Wall
+
+executable tutTyping
+  hs-source-dirs: src
+  main-is:        tutTyping.hs
+  other-modules:  KeyPos
+  build-depends:  base >= 3 && < 5, vty, yjtools, time
+  ghc-options:    -Wall
