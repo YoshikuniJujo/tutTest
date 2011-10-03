@@ -28,3 +28,10 @@ executable tutTyping
   other-modules:  KeyPos
   build-depends:  base >= 3 && < 5, vty, yjtools, time
   ghc-options:    -Wall
+
+executable tutCheck
+  hs-source-dirs: src
+  main-is:        tutCheck.hs
+  other-modules:  KeyPos
+  build-depends:  base >= 3 && < 5, vty, yjtools, time, utf8-string
+  ghc-options:    -Wall

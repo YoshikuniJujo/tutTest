@@ -14,6 +14,8 @@ module KeyPos (
 , strToTutDic
 , showTutDic
 
+, showKeyPos
+
 ) where
 
 import Data.Maybe   ( fromMaybe )
