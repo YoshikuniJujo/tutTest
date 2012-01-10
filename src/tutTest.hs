@@ -6,6 +6,7 @@ import System.Environment( getArgs )
 import Graphics.Vty
 import Control.Monad.Tools
 import Control.Monad ( zipWithM )
+import System.IO
 
 main :: IO ()
 main = do
@@ -18,7 +19,7 @@ main = do
   ret <- zipWithM ( runTutTest keyPos tutRule vty ) cnt' [ 1 .. ]
 --  mapM_ ( runTutTest keyPos tutRule vty ) cnt'
   shutdown vty
-  putStrLn $ concatMap ( showTut keyPos tutRule ) ret
+  hPutStrLn stderr $ concatMap ( showTut keyPos tutRule ) ret
 
 runTutTest ::
   [ ( Char, KeyPos ) ] -> [ ( String, [ Char ] ) ] -> Vty -> [ KeyPos ]
