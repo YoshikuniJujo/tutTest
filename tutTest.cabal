@@ -20,18 +20,18 @@ executable tutTest
   main-is:        tutTest.hs
   other-modules:  KeyPos
   build-depends:  base >= 3 && < 5, vty, yjtools
-  ghc-options:    -Wall
+  ghc-options:    -Wall -fno-warn-tabs -threaded
 
 executable tutTyping
   hs-source-dirs: src
   main-is:        tutTyping.hs
   other-modules:  KeyPos
   build-depends:  base >= 3 && < 5, vty, yjtools, time
-  ghc-options:    -Wall
+  ghc-options:    -Wall -fno-warn-tabs -threaded
 
 executable tutCheck
   hs-source-dirs: src
   main-is:        tutCheck.hs
   other-modules:  KeyPos
-  build-depends:  base >= 3 && < 5, vty, yjtools, time, utf8-string
-  ghc-options:    -Wall
+  build-depends:  base >= 3 && < 5, vty, yjtools, time
+  ghc-options:    -Wall -fno-warn-tabs

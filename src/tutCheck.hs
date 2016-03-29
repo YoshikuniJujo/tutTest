@@ -3,11 +3,16 @@ module Main where
 import KeyPos
 import System.Environment
 import Paths_tutTest
-import Codec.Binary.UTF8.String
 
 main :: IO ()
 main = do
-	[str]	<- fmap (map decodeString) getArgs
-	tutRule	<- getDataFileName "tutcode-rule.txt" >>= readFile >>= return . read
-	keyPos	<- getDataFileName "keyboard-pos.txt" >>= readFile >>= return . read
-	putStrLn $ unwords $ map showKeyPos $ strToTutPos keyPos tutRule str
+	[str]	<- getArgs
+	tr	<- tutRule
+	kp	<- keyPos
+	putStrLn $ unwords $ map showKeyPos $ strToTutPos kp tr str
+
+tutRule :: IO [(String, [Char])]
+tutRule	= getDataFileName "tutcode-rule.txt" >>= readFile >>= return . read
+
+keyPos :: IO [(Char, KeyPos)]
+keyPos	= getDataFileName "keyboard-pos.txt" >>= readFile >>= return . read

@@ -14,8 +14,9 @@ main = do
   tutRule      <- getDataFileName "tutcode-rule.txt" >>= readFile >>= return . read
   keyPos       <- getDataFileName "keyboard-pos.txt" >>= readFile >>= return . read
   cnt          <- readFile fn
-  vty <- mkVty
-  DisplayRegion width height <- display_bounds $ terminal vty
+  cfg <- standardIOConfig
+  vty <- mkVty cfg
+  (width, height) <- displayBounds =<< outputForConfig cfg
   (g, w, t) <-  foreach (lines cnt) $ \ln -> do
     let ( pos, dic ) = readTutLineWithDic keyPos tutRule ln
     5 `timesDo` ( 0, 1, 1 ) $ \n ( g0, w0, t0 ) -> do
@@ -37,35 +38,36 @@ runTutTyping ::
                        -> [ KeyPos ] -> [ ( Char, [ KeyPos ] ) ] -> Int -> ( Int, Int, NominalDiffTime )
                        -> IO ( Int, Int, NominalDiffTime, Bool )
 runTutTyping keyPos tutRule vty str dic n ( g, w, t ) = do
-  DisplayRegion wt ht <- display_bounds $ terminal vty
+  cfg <- standardIOConfig
+  (wt, ht) <- displayBounds =<< outputForConfig cfg
   let width = fromIntegral wt
-      img = string current_attr $ show n ++ " " ++ showTut keyPos tutRule str
+      img = string currentAttr $ show n ++ " " ++ showTut keyPos tutRule str
       ret = show g ++ "/" ++ show w ++ " " ++
             showFFloat ( Just 0 )
                        ( fromIntegral g / ( fromIntegral w :: Double ) * 100 ) ""
             ++  "% "
             ++ showSpeed t ++ "sec " ++
             showSpeed ( fromIntegral w / t ) ++ "key/sec"
-  update vty $ pic_for_image $ ( img <-> )
+  update vty $ picForImage $ ( img <-> )
                              $ ( flip ( foldl (<->) )
-                                 $ map ( string current_attr )
+                                 $ map ( string currentAttr )
                                    ( splitString
                                      ( width `div` 2 ) "" $ map showTutDic dic ) )
-                             $ ( !! 8 ) $ iterate ( <-> string current_attr " " )
-                             $ ( <-> string current_attr ret )
-                             $ ( !! 8 ) $ iterate ( <-> string current_attr " " )
-                             $ string current_attr " "
+                             $ ( !! 8 ) $ iterate ( <-> string currentAttr " " )
+                             $ ( <-> string currentAttr ret )
+                             $ ( !! 8 ) $ iterate ( <-> string currentAttr " " )
+                             $ string currentAttr " "
   pre <- getCurrentTime
   ( input, fin ) <- doWhile ( [ ], True ) $ \( pns, _ ) -> do
     p <- getPos keyPos vty
-    update vty $ pic_for_image $ ( img <-> )
-                               $ ( flip ( foldl (<->) ) $ map ( string current_attr )
+    update vty $ picForImage $ ( img <-> )
+                               $ ( flip ( foldl (<->) ) $ map ( string currentAttr )
                                                               ( splitString
                                                                  ( width `div` 2 ) "" $ map showTutDic dic ) )
-                               $ ( !! 8 ) $ iterate ( <-> string current_attr " " )
-                               $ ( <-> string current_attr ret )
-                               $ ( !! 8 ) $ iterate ( <-> string current_attr " " )
-                               $ string current_attr
+                               $ ( !! 8 ) $ iterate ( <-> string currentAttr " " )
+                               $ ( <-> string currentAttr ret )
+                               $ ( !! 8 ) $ iterate ( <-> string currentAttr " " )
+                               $ string currentAttr
                                $ ( replicate ( 1 + length ( show n ) ) ' ' ++ )
                                $ showTut keyPos tutRule
                                $  pns ++ [ p ]

@@ -20,9 +20,11 @@ module KeyPos (
 
 import Data.Maybe   ( fromMaybe )
 import Data.List    ( isPrefixOf, nub, (\\) )
-import Graphics.Vty ( Vty, mkVty, update, next_event, shutdown, pic_for_image,
-                      string, current_attr, Event( EvKey ),
-                      Key( KASCII, KEsc, KEnter ), (<->) )
+import Graphics.Vty ( Vty, mkVty, standardIOConfig,
+			update, nextEvent, shutdown, picForImage,
+			string, Event( EvKey ), (<->) )
+import Graphics.Vty.Attributes (currentAttr)
+import Graphics.Vty.Input (Key( KChar, KEsc, KEnter))
 import Control.Monad.Tools ( doWhile )
 import Control.Arrow       ( first, second )
 import System.IO           ( withFile, IOMode( ReadMode ), hGetLine )
@@ -34,11 +36,12 @@ main = do
   tutTable <- readFile "src/tutcode-rule.txt" >>= return . read
   readTutFile posTable tutTable "test.txt" >>= print
   readTutFile posTable tutTable "test.txt" >>= putStrLn . showTut posTable tutTable
-  vty <- mkVty
+  cfg <- standardIOConfig
+  vty <- mkVty cfg
   _ <- doWhile [ ] $ \pns -> do
     pos <- getPos posTable vty
-    update vty $ pic_for_image $ ( string current_attr "module KeyPos" <-> )
-                               $ string current_attr
+    update vty $ picForImage $ ( string currentAttr "module KeyPos" <-> )
+                               $ string currentAttr
                                $ showTut posTable tutTable ( pns ++ [ pos ] )
     return ( pns ++ [ pos ], pos /= PosEsc )
   shutdown vty
@@ -80,7 +83,7 @@ charToKeyPos :: [ ( Char, KeyPos ) ] -> Char -> KeyPos
 charToKeyPos tbl = fromMaybe PosOut . flip lookup tbl
 
 getPosFromEvent :: [ ( Char, KeyPos ) ] -> Event -> Maybe KeyPos
-getPosFromEvent tbl ( EvKey ( KASCII c ) [ ] ) = Just $ charToKeyPos tbl c
+getPosFromEvent tbl ( EvKey ( KChar c ) [ ] ) = Just $ charToKeyPos tbl c
 getPosFromEvent _   ( EvKey KEsc         [ ] ) = Just PosEsc
 getPosFromEvent _   ( EvKey KEnter       [ ] ) = Just PosEnter
 getPosFromEvent _   ( EvKey _            _   ) = Just PosOut
@@ -88,7 +91,7 @@ getPosFromEvent _   _                          = Nothing
 
 getPos :: [ ( Char, KeyPos ) ] -> Vty -> IO KeyPos
 getPos tbl vty = doWhile PosOut $ \_ -> do
-         ev <- next_event vty
+         ev <- nextEvent vty
          case getPosFromEvent tbl ev of
               Just pos -> return ( pos   , False )
               Nothing  -> return ( PosOut, True  )

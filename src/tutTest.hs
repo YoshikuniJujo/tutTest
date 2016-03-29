@@ -15,7 +15,8 @@ main = do
   keyPos  <- getDataFileName "keyboard-pos.txt" >>= readFile >>= return . read
 --  cnt  <- readTutFileLine keyPos tutRule fn
   cnt' <- readTutFileLineSep keyPos tutRule fn
-  vty <- mkVty
+  cfg <- standardIOConfig
+  vty <- mkVty cfg
   ret <- zipWithM ( runTutTest keyPos tutRule vty ) cnt' [ 1 .. ]
 --  mapM_ ( runTutTest keyPos tutRule vty ) cnt'
   shutdown vty
@@ -25,12 +26,12 @@ runTutTest ::
   [ ( Char, KeyPos ) ] -> [ ( String, [ Char ] ) ] -> Vty -> [ KeyPos ]
                        -> Int -> IO [ KeyPos ]
 runTutTest keyPos tutRule vty str n = do
-  let img = string current_attr $ show n ++ " " ++ showTut keyPos tutRule str
-  update vty $ pic_for_image img
+  let img = string currentAttr $ show n ++ " " ++ showTut keyPos tutRule str
+  update vty $ picForImage img
   ret <- doWhile [ ] $ \pns -> do
     pos <- getPos keyPos vty
-    update vty $ pic_for_image $ ( img <-> )
-                               $ string current_attr
+    update vty $ picForImage $ ( img <-> )
+                               $ string currentAttr
                                $ replicate ( length $ show n ) ' ' ++ " " ++
                                  showTut keyPos tutRule ( pns ++ [ pos ] )
     if pos == PosEsc
