@@ -10,14 +10,13 @@ user-message: ! 'Warning: Specified resolver could not satisfy all dependencies.
 '
 
 # Specifies the GHC version and set of packages available (e.g., lts-3.5, nightly-2015-09-21, ghc-7.10.2)
-resolver: lts-5.10
+resolver: lts-5.14
 
 # Local packages, usually specified by relative directory name
 packages:
 - '.'
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps:
-- text-1.2.2.1
 - yjtools-0.9.18
 
 # Override default flag values for local packages and extra-deps
