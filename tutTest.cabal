@@ -10,7 +10,7 @@ synopsis:      Practice for tut-code which is Japanese input tool.
 description:   Practice for tut-code which is Japanese input tool.
 
 build-type:    Simple
-cabal-version: >= 1.2
+cabal-version: >= 1.8
 
 data-dir:      src
 data-files:    tutcode-rule.txt, keyboard-pos.txt
