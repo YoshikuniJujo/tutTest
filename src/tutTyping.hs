@@ -4,6 +4,7 @@ import Paths_tutTest
 import System.Environment
 import KeyPos
 import Graphics.Vty
+import Graphics.Vty.Platform.Unix
 import Control.Monad.Tools
 import Data.Time
 import Numeric
@@ -14,9 +15,8 @@ main = do
   tutRule      <- getDataFileName "tutcode-rule.txt" >>= readFile >>= return . read
   keyPos       <- getDataFileName "keyboard-pos.txt" >>= readFile >>= return . read
   cnt          <- readFile fn
-  cfg <- standardIOConfig
-  vty <- mkVty cfg
-  (width, height) <- displayBounds =<< outputForConfig cfg
+  vty <- mkVty defaultConfig
+  (width, height) <- displayBounds $ outputIface vty
   (g, w, t) <-  foreach (lines cnt) $ \ln -> do
     let ( pos, dic ) = readTutLineWithDic keyPos tutRule ln
     5 `timesDo` ( 0, 1, 1 ) $ \n ( g0, w0, t0 ) -> do
@@ -38,8 +38,7 @@ runTutTyping ::
                        -> [ KeyPos ] -> [ ( Char, [ KeyPos ] ) ] -> Int -> ( Int, Int, NominalDiffTime )
                        -> IO ( Int, Int, NominalDiffTime, Bool )
 runTutTyping keyPos tutRule vty str dic n ( g, w, t ) = do
-  cfg <- standardIOConfig
-  (wt, ht) <- displayBounds =<< outputForConfig cfg
+  (wt, ht) <- displayBounds $ outputIface vty
   let width = fromIntegral wt
       img = string currentAttr $ show n ++ " " ++ showTut keyPos tutRule str
       ret = show g ++ "/" ++ show w ++ " " ++

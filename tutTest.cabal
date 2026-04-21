@@ -1,5 +1,5 @@
 name:          tutTest
-version:       0.0.6
+version:       0.0.7
 license:       BSD3
 license-file:  LICENSE
 author:        Yoshikuni Jujo
@@ -19,19 +19,19 @@ executable tutTest
   hs-source-dirs: src
   main-is:        tutTest.hs
   other-modules:  KeyPos
-  build-depends:  base >= 3 && < 5, vty, yjtools
+  build-depends:  base >= 3 && < 5, vty, vty-unix, yjtools
   ghc-options:    -Wall -fno-warn-tabs -threaded
 
 executable tutTyping
   hs-source-dirs: src
   main-is:        tutTyping.hs
   other-modules:  KeyPos
-  build-depends:  base >= 3 && < 5, vty, yjtools, time
+  build-depends:  base >= 3 && < 5, vty, vty-unix, yjtools, time
   ghc-options:    -Wall -fno-warn-tabs -threaded
 
 executable tutCheck
   hs-source-dirs: src
   main-is:        tutCheck.hs
   other-modules:  KeyPos
-  build-depends:  base >= 3 && < 5, vty, yjtools, time
+  build-depends:  base >= 3 && < 5, vty, vty-unix, yjtools, time
   ghc-options:    -Wall -fno-warn-tabs

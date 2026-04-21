@@ -7,6 +7,7 @@ import Graphics.Vty
 import Control.Monad.Tools
 import Control.Monad ( zipWithM )
 import System.IO
+import Graphics.Vty.Platform.Unix
 
 main :: IO ()
 main = do
@@ -15,8 +16,7 @@ main = do
   keyPos  <- getDataFileName "keyboard-pos.txt" >>= readFile >>= return . read
 --  cnt  <- readTutFileLine keyPos tutRule fn
   cnt' <- readTutFileLineSep keyPos tutRule fn
-  cfg <- standardIOConfig
-  vty <- mkVty cfg
+  vty <- mkVty defaultConfig
   ret <- zipWithM ( runTutTest keyPos tutRule vty ) cnt' [ 1 .. ]
 --  mapM_ ( runTutTest keyPos tutRule vty ) cnt'
   shutdown vty

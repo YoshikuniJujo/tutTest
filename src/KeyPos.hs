@@ -20,7 +20,7 @@ module KeyPos (
 
 import Data.Maybe   ( fromMaybe )
 import Data.List    ( isPrefixOf, nub, (\\) )
-import Graphics.Vty ( Vty, mkVty, standardIOConfig,
+import Graphics.Vty ( Vty, defaultConfig,
 			update, nextEvent, shutdown, picForImage,
 			string, Event( EvKey ), (<->) )
 import Graphics.Vty.Attributes (currentAttr)
@@ -29,6 +29,8 @@ import Control.Monad.Tools ( doWhile )
 import Control.Arrow       ( first, second )
 import System.IO           ( withFile, IOMode( ReadMode ), hGetLine )
 
+import Graphics.Vty.Platform.Unix (mkVty)
+
 main :: IO ()
 main = do
   putStrLn "module KeyPos"
@@ -36,8 +38,7 @@ main = do
   tutTable <- readFile "src/tutcode-rule.txt" >>= return . read
   readTutFile posTable tutTable "test.txt" >>= print
   readTutFile posTable tutTable "test.txt" >>= putStrLn . showTut posTable tutTable
-  cfg <- standardIOConfig
-  vty <- mkVty cfg
+  vty <- mkVty defaultConfig
   _ <- doWhile [ ] $ \pns -> do
     pos <- getPos posTable vty
     update vty $ picForImage $ ( string currentAttr "module KeyPos" <-> )
